@@ -31,7 +31,7 @@ jobs:
             (rm -rf /home/github/test || true)
             ls -la
             echo $WELCOME
-            (mkdir -p $DIR1 || true)
+            (mkdir -p $DIR1 || true) &&
             (mkdir -p $DIR2 || true)
 
       - name: ssh pipeline 2
@@ -41,6 +41,5 @@ jobs:
           user: ${{ secrets.DC_USER }}
           pass: ${{ secrets.DC_PASS }}
           script: |-
-            ls -la
             rm -rf /home/github/test
             ls -la
