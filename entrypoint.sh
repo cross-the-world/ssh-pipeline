@@ -62,9 +62,9 @@ executeSSH() {
     else
       # ref. https://unix.stackexchange.com/questions/459923/multiple-commands-in-sshpass
       if [[ $COMMANDS =~ ^.*\&\&$ ]] || [[ $COMMANDS =~ ^.*\|\|$ ]]; then
-        COMMANDS="$COMMANDS $LINE"
+        COMMANDS="$COMMANDS ${LINE}"
       else
-        COMMANDS="$COMMANDS $COMBINE $LINE"
+        COMMANDS="$COMMANDS $COMBINE ${LINE}"
       fi
     fi
   done <<< "$LINES"
@@ -74,13 +74,13 @@ executeSSH() {
   elif [[ $COMMANDS =~ ^.*\|\|$ ]]; then
     COMMANDS="$COMMANDS false"
   fi
-  echo "$COMMANDS"
+  echo "${COMMANDS}"
 
   CMD="ssh"
   if $USEPASS; then
     CMD="sshpass -p $INPUT_PASS ssh"
   fi
-  $CMD -o StrictHostKeyChecking=no -o ConnectTimeout=${INPUT_CONNECT_TIMEOUT:-30s} -p "${INPUT_PORT:-22}" "$INPUT_USER"@"$INPUT_HOST" "$COMMANDS" > /dev/stdout
+  $CMD -o StrictHostKeyChecking=no -o ConnectTimeout=${INPUT_CONNECT_TIMEOUT:-30s} -p "${INPUT_PORT:-22}" "$INPUT_USER"@"$INPUT_HOST" "${COMMANDS}" > /dev/stdout
 }
 
 
