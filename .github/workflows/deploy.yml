@@ -1,0 +1,42 @@
+name: ssh-pipeline
+on:
+  push:
+    branches:
+      - latest
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+
+      - name: ssh pipeline 1
+        uses: cross-the-world/ssh-pipeline@latest
+        env:
+          WELCOME: "ssh pipeline"
+        with:
+          host: ${{ secrets.DC_HOST }}
+          user: ${{ secrets.DC_USER }}
+          pass: ${{ secrets.DC_PASS }}
+          port: ${{ secrets.DC_PORT }}
+          connect_timeout: 10s
+          script: |
+            (rm -rf /home/github/test || true)
+            ls -la
+            echo $WELCOME
+            mkdir -p /home/github/test/test1 &&
+            mkdir -p /home/github/test/test2 &&
+
+      - name: ssh pipeline 2
+          uses: cross-the-world/ssh-pipeline@latest
+          with:
+            host: ${{ secrets.DC_HOST }}
+            user: ${{ secrets.DC_USER }}
+            pass: ${{ secrets.DC_PASS }}
+            script: |-
+              ls -la
+              rm -rf /home/github/test
+              ls -la
