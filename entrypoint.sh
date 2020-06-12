@@ -52,6 +52,8 @@ executeSSH() {
     LINE=$(eval 'echo "$LINE"')
     if ! [[ $LINE =~ ^\(.*\)$ ]];  then
       LINE=$(eval echo "$LINE")
+    else
+      LINE="${LINE}"
     fi
     LINE="$LINE $LASTCOMBINE"
 
