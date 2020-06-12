@@ -4,6 +4,9 @@ on:
     branches:
       - master
 
+env:
+  DIR1: "/home/github/test/test1"
+
 jobs:
   build:
     name: Build
@@ -17,6 +20,7 @@ jobs:
         uses: cross-the-world/ssh-pipeline@master
         env:
           WELCOME: "ssh pipeline"
+          DIR2: "/home/github/test/test2"
         with:
           host: ${{ secrets.DC_HOST }}
           user: ${{ secrets.DC_USER }}
@@ -27,8 +31,8 @@ jobs:
             (rm -rf /home/github/test || true)
             ls -la
             echo $WELCOME
-            mkdir -p /home/github/test/test1 &&
-            mkdir -p /home/github/test/test2 &&
+            (mkdir -p $DIR1 || true)
+            (mkdir -p $DIR2 || true)
 
       - name: ssh pipeline 2
         uses: cross-the-world/ssh-pipeline@master
