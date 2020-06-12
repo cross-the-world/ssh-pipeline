@@ -1,5 +1,5 @@
-name: 'ssh-scp-ssh-pipelines'
-description: 'Pipelines: ssh -> scp -> ssh'
+name: 'ssh-pipeline'
+description: 'Pipeline: ssh'
 author: 'Scott Ng'
 inputs:
   host:
