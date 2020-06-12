@@ -59,8 +59,8 @@ def ssh_process():
     stdin, stdout, stderr = ssh.exec_command(command_str)
 
     err = "".join(stderr.readlines())
-    err = err.strip() if err is not None else ""
-    if err is not None:
+    err = err.strip() if err is not None else None
+    if err:
         raise Exception(f"SSH failed:\n{err}")
 
     print("".join(stdout.readlines()))
