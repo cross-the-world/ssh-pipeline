@@ -31,12 +31,12 @@ jobs:
             mkdir -p /home/github/test/test2 &&
 
       - name: ssh pipeline 2
-          uses: cross-the-world/ssh-pipeline@master
-          with:
-            host: ${{ secrets.DC_HOST }}
-            user: ${{ secrets.DC_USER }}
-            pass: ${{ secrets.DC_PASS }}
-            script: |-
-              ls -la
-              rm -rf /home/github/test
-              ls -la
+        uses: cross-the-world/ssh-pipeline@master
+        with:
+          host: ${{ secrets.DC_HOST }}
+          user: ${{ secrets.DC_USER }}
+          pass: ${{ secrets.DC_PASS }}
+          script: |-
+            ls -la
+            rm -rf /home/github/test
+            ls -la
