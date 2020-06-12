@@ -42,7 +42,7 @@ see the [deploy.yml](./.github/workflows/deploy.yml) file for more detail imform
 
 ```yaml
 - name: ssh pipelines
-  uses: cross-the-world/ssh-pipeline@latest
+  uses: cross-the-world/ssh-pipeline@master
   env:
     WELCOME: "ssh pipeline"
   with:
