@@ -44,3 +44,14 @@ jobs:
             rm -rf /home/github/test
             (mkdir test1/test || true)
             ls -la
+
+      - name: ssh pipeline 3
+        uses: cross-the-world/ssh-pipeline@master
+        with:
+          host: ${{ secrets.DC_HOST }}
+          user: ${{ secrets.DC_USER }}
+          pass: ${{ secrets.DC_PASS }}
+          script: |-
+            (mkdir test1/test || true)
+            mkdir -p test/test1
+            rm -rf /home/github/test

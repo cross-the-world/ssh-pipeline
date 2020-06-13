@@ -58,15 +58,18 @@ def ssh_process():
                     timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
         stdin, stdout, stderr = ssh.exec_command(command_str)
 
-        err = "".join(stderr.readlines())
-        err = err.strip() if err is not None else None
-        if err:
-            print(f"Error: \n{err}")
-
         out = "".join(stdout.readlines())
         out = out.strip() if out is not None else None
         if out:
             print(f"Success: \n{out}")
+
+        err = "".join(stderr.readlines())
+        err = err.strip() if err is not None else None
+        if err:
+            if out is None:
+                raise Exception(err)
+            else:
+                print(f"Error: \n{err}")
 
 
 if __name__ == '__main__':
