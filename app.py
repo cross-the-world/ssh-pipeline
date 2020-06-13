@@ -50,20 +50,23 @@ def ssh_process():
     command_str = command_str.strip()
     print(command_str)
 
-    ssh = paramiko.SSHClient()
-    p_key = paramiko.RSAKey.from_private_key(INPUT_KEY) if INPUT_KEY else None
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(INPUT_HOST, port=INPUT_PORT, username=INPUT_USER,
-                pkey=p_key, password=INPUT_PASS,
-                timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
-    stdin, stdout, stderr = ssh.exec_command(command_str)
+    with paramiko.SSHClient() as ssh:
+        p_key = paramiko.RSAKey.from_private_key(INPUT_KEY) if INPUT_KEY else None
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(INPUT_HOST, port=INPUT_PORT, username=INPUT_USER,
+                    pkey=p_key, password=INPUT_PASS,
+                    timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
+        stdin, stdout, stderr = ssh.exec_command(command_str)
 
-    err = "".join(stderr.readlines())
-    err = err.strip() if err is not None else None
-    if err:
-        raise Exception(f"SSH failed:\n{err}")
+        err = "".join(stderr.readlines())
+        err = err.strip() if err is not None else None
+        if err:
+            print(f"Error: \n{err}")
 
-    print("".join(stdout.readlines()))
+        out = "".join(stdout.readlines())
+        out = out.strip() if out is not None else None
+        if out:
+            print(f"Success: \n{out}")
 
 
 if __name__ == '__main__':

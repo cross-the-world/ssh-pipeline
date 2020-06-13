@@ -42,4 +42,5 @@ jobs:
           pass: ${{ secrets.DC_PASS }}
           script: |-
             rm -rf /home/github/test
+            (mkdir test1/test || true)
             ls -la
