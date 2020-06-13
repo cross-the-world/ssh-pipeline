@@ -16,7 +16,6 @@ COPY requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
 
 RUN mkdir -p /opt/tools
-WORKDIR /opt/tools
 
 COPY entrypoint.sh /opt/tools/entrypoint.sh
 RUN chmod +x /opt/tools/entrypoint.sh
