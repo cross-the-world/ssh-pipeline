@@ -2,7 +2,7 @@ FROM python:3.8.3-slim-buster
 
 LABEL "maintainer"="Scott Ng <thuongnht@gmail.com>"
 LABEL "repository"="https://github.com/cross-the-world/ssh-pipeline"
-LABEL "version"="latest"
+LABEL "version"="v1.1.0"
 
 LABEL "com.github.actions.name"="ssh-pipeline"
 LABEL "com.github.actions.description"="Pipeline: ssh"
@@ -24,4 +24,4 @@ RUN chmod +x /opt/tools/entrypoint.sh
 COPY app.py /opt/tools/app.py
 RUN chmod +x /opt/tools/app.py
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/opt/tools/entrypoint.sh"]
