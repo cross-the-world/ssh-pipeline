@@ -2,6 +2,8 @@ from os import environ, path
 import paramiko
 import math
 import re
+import tempfile
+import os
 
 
 envs = environ
@@ -51,25 +53,34 @@ def ssh_process():
     print(command_str)
 
     with paramiko.SSHClient() as ssh:
-        p_key = paramiko.RSAKey.from_private_key(INPUT_KEY) if INPUT_KEY else None
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(INPUT_HOST, port=INPUT_PORT, username=INPUT_USER,
-                    pkey=p_key, password=INPUT_PASS,
-                    timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
-        stdin, stdout, stderr = ssh.exec_command(command_str)
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        try:
+            p_key = None
+            if INPUT_KEY:
+                tmp.write(INPUT_KEY.encode())
+                tmp.close()
+                p_key = paramiko.RSAKey.from_private_key_file(filename=tmp.name)
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(INPUT_HOST, port=INPUT_PORT, username=INPUT_USER,
+                        pkey=p_key, password=INPUT_PASS,
+                        timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
 
-        out = "".join(stdout.readlines())
-        out = out.strip() if out is not None else None
-        if out:
-            print(f"Success: \n{out}")
+            stdin, stdout, stderr = ssh.exec_command(command_str)
+            out = "".join(stdout.readlines())
+            out = out.strip() if out is not None else None
+            if out:
+                print(f"Success: \n{out}")
 
-        err = "".join(stderr.readlines())
-        err = err.strip() if err is not None else None
-        if err:
-            if out is None:
-                raise Exception(err)
-            else:
-                print(f"Error: \n{err}")
+            err = "".join(stderr.readlines())
+            err = err.strip() if err is not None else None
+            if err:
+                if out is None:
+                    raise Exception(err)
+                else:
+                    print(f"Error: \n{err}")
+        finally:
+            os.unlink(tmp.name)
+            tmp.close()
 
 
 if __name__ == '__main__':
