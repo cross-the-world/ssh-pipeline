@@ -66,6 +66,8 @@ def ssh_process():
                         timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
 
             stdin, stdout, stderr = ssh.exec_command(command_str)
+            return_code = stdout.channel.recv_exit_status()
+
             out = "".join(stdout.readlines())
             out = out.strip() if out is not None else None
             if out:
@@ -73,7 +75,7 @@ def ssh_process():
 
             err = "".join(stderr.readlines())
             err = err.strip() if err is not None else None
-            if err:
+            if err or return_code != "0":
                 if out is None:
                     raise Exception(err)
                 else:
