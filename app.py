@@ -76,7 +76,7 @@ def ssh_process():
             err = "".join(stderr.readlines())
             err = err.strip() if err is not None else None
 
-            if return_code != "0":
+            if return_code != 0:
                 err += "ERROR: return code {0}".format(return_code)
 
             if err:
