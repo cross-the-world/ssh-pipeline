@@ -4,6 +4,7 @@ import math
 import re
 import tempfile
 import os
+import sys
 
 
 envs = environ
@@ -16,8 +17,10 @@ INPUT_CONNECT_TIMEOUT = envs.get("INPUT_CONNECT_TIMEOUT", "30s")
 INPUT_SCRIPT = envs.get("INPUT_SCRIPT")
 
 
-seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400, "w": 604800, "M": 86400*30}
-pattern_seconds_per_unit = re.compile(r'^(' + "|".join(['\\d+'+k for k in seconds_per_unit.keys()]) + ')$')
+seconds_per_unit = {"s": 1, "m": 60, "h": 3600,
+                    "d": 86400, "w": 604800, "M": 86400*30}
+pattern_seconds_per_unit = re.compile(
+    r'^(' + "|".join(['\\d+'+k for k in seconds_per_unit.keys()]) + ')$')
 
 
 def convert_to_seconds(s):
@@ -59,13 +62,16 @@ def ssh_process():
             if INPUT_KEY:
                 tmp.write(INPUT_KEY.encode())
                 tmp.close()
-                p_key = paramiko.RSAKey.from_private_key_file(filename=tmp.name)
+                p_key = paramiko.RSAKey.from_private_key_file(
+                    filename=tmp.name)
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(INPUT_HOST, port=INPUT_PORT, username=INPUT_USER,
                         pkey=p_key, password=INPUT_PASS,
                         timeout=convert_to_seconds(INPUT_CONNECT_TIMEOUT))
 
             stdin, stdout, stderr = ssh.exec_command(command_str)
+            ssh_exit_status = stdout.channel.recv_exit_status()
+
             out = "".join(stdout.readlines())
             out = out.strip() if out is not None else None
             if out:
@@ -74,10 +80,12 @@ def ssh_process():
             err = "".join(stderr.readlines())
             err = err.strip() if err is not None else None
             if err:
-                if out is None:
-                    raise Exception(err)
-                else:
-                    print(f"Error: \n{err}")
+                print(f"Error: \n{err}")
+
+            if ssh_exit_status != 0:
+                print(f"ssh exit status: {ssh_exit_status}")
+                sys.exit(1)
+
         finally:
             os.unlink(tmp.name)
             tmp.close()
@@ -85,5 +93,3 @@ def ssh_process():
 
 if __name__ == '__main__':
     ssh_process()
-
-
