@@ -67,7 +67,6 @@ def ssh_process():
 
             stdin, stdout, stderr = ssh.exec_command(command_str)
             return_code = stdout.channel.recv_exit_status()
-            print(return_code)
 
             out = "".join(stdout.readlines())
             out = out.strip() if out is not None else None
@@ -76,7 +75,11 @@ def ssh_process():
 
             err = "".join(stderr.readlines())
             err = err.strip() if err is not None else None
-            if err or return_code != "0":
+
+            if return_code != "0":
+                err += "ERROR: return code {0}".format(return_code)
+
+            if err:
                 if out is None:
                     raise Exception(err)
                 else:
